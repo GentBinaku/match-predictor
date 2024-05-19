@@ -11,8 +11,8 @@ from matchpredictor.matchresults.results_provider import training_results
 from matchpredictor.model.model_provider import Model, ModelProvider
 from matchpredictor.model.models_api import models_api
 from matchpredictor.predictors.alphabet_predictor import AlphabetPredictor
-from matchpredictor.predictors.decision_tree_predictor import (
-    train_decision_tree_predictor,
+from matchpredictor.predictors.random_forest_regressor import (
+    train_random_forest_predictor,
 )
 from matchpredictor.predictors.home_predictor import HomePredictor
 from matchpredictor.predictors.linear_regression_predictor import (
@@ -48,7 +48,7 @@ def build_model_provider(training_data: List[Result]) -> ModelProvider:
                 train_offense_and_defense_predictor(training_data, 10_000),
             ),
             Model("Alphabet Provider", AlphabetPredictor()),
-            Model("Decision Tree", train_decision_tree_predictor(training_data)),
+            Model("Random Forest Predictor", train_random_forest_predictor(training_data)),
             # The linear regression model uses scikit learn, so can cause issues on some machines
             # Model("Linear regression", train_regression_predictor(training_data))
         ]

@@ -1,12 +1,12 @@
 from typing import List, Optional, Tuple
 
-import joblib
+import joblib # type: ignore
 import numpy as np
 from numpy import float64
 from numpy.typing import NDArray
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.ensemble import RandomForestRegressor # type: ignore
+from sklearn.model_selection import GridSearchCV # type: ignore
+from sklearn.preprocessing import OneHotEncoder # type: ignore
 
 from matchpredictor.matchresults.result import Fixture, Outcome, Result, Team
 from matchpredictor.predictors.past_results_predictor import calculate_table
@@ -23,7 +23,7 @@ def calculate_average_goals(results: List[Result], team: Team, n: int) -> float:
     return sum(goals) / len(goals) if goals else 0
 
 
-class DecisionTreePredictor(Predictor):
+class RandomForestPredictor(Predictor):
     def __init__(
         self,
         model: RandomForestRegressor,
@@ -165,7 +165,6 @@ def build_model(results: List[Result]) -> Tuple[RandomForestRegressor, OneHotEnc
 
     n_cores = joblib.cpu_count(only_physical_cores=True)
 
-    model = RandomForestRegressor()
 
     # Define the parameter grid
     param_grid = {
@@ -192,6 +191,6 @@ def build_model(results: List[Result]) -> Tuple[RandomForestRegressor, OneHotEnc
     return model, team_encoding
 
 
-def train_decision_tree_predictor(results: List[Result]) -> Predictor:
+def train_random_forest_predictor(results: List[Result]) -> Predictor:
     model, team_encoding = build_model(results)
-    return DecisionTreePredictor(model, team_encoding, results)
+    return RandomForestPredictor(model, team_encoding, results)
