@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/gentb/match-predictor/backend/matchpredictor/__main__.py", line 18, in <module>
+    football_data_api_key=require_env('FOOTBALL_DATA_API_KEY'),
+  File "/home/gentb/match-predictor/backend/matchpredictor/__main__.py", line 9, in require_env
+    raise Exception(f"Failed to read {name} from the environment")
+Exception: Failed to read FOOTBALL_DATA_API_KEY from the environment

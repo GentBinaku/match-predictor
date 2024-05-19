@@ -1,0 +1,6 @@
+.vscode
+backend/env
+backend/.mypy_cache
+**__pycache_**
+frontend/node_modules
+integration-tests/node_modules
