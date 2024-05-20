@@ -11,14 +11,11 @@ from matchpredictor.matchresults.results_provider import training_results
 from matchpredictor.model.model_provider import Model, ModelProvider
 from matchpredictor.model.models_api import models_api
 from matchpredictor.predictors.alphabet_predictor import AlphabetPredictor
+from matchpredictor.predictors.home_predictor import HomePredictor
+from matchpredictor.predictors.past_results_predictor import train_results_predictor
 from matchpredictor.predictors.random_forest_regressor import (
     train_random_forest_predictor,
 )
-from matchpredictor.predictors.home_predictor import HomePredictor
-from matchpredictor.predictors.linear_regression_predictor import (
-    train_regression_predictor,
-)
-from matchpredictor.predictors.past_results_predictor import train_results_predictor
 from matchpredictor.predictors.simulation_predictor import (
     train_offense_and_defense_predictor,
     train_offense_predictor,
@@ -27,6 +24,10 @@ from matchpredictor.teams.teams_api import teams_api
 from matchpredictor.teams.teams_provider import TeamsProvider
 from matchpredictor.upcominggames.football_data_api_client import FootballDataApiClient
 from matchpredictor.upcominggames.upcoming_games_api import upcoming_games_api
+
+# from matchpredictor.predictors.linear_regression_predictor import (
+#     train_regression_predictor,
+# )
 
 
 def build_model_provider(training_data: List[Result]) -> ModelProvider:
@@ -48,7 +49,9 @@ def build_model_provider(training_data: List[Result]) -> ModelProvider:
                 train_offense_and_defense_predictor(training_data, 10_000),
             ),
             Model("Alphabet Provider", AlphabetPredictor()),
-            Model("Random Forest Predictor", train_random_forest_predictor(training_data)),
+            Model(
+                "Random Forest Predictor", train_random_forest_predictor(training_data)
+            ),
             # The linear regression model uses scikit learn, so can cause issues on some machines
             # Model("Linear regression", train_regression_predictor(training_data))
         ]
@@ -58,6 +61,8 @@ def build_model_provider(training_data: List[Result]) -> ModelProvider:
 @dataclass
 class AppEnvironment:
     csv_location: str
+    regression_csv_location: str
+    regression_csv_include: bool
     season: int
     football_data_api_key: str
 
@@ -69,6 +74,12 @@ def create_app(env: AppEnvironment) -> Flask:
         return result.season >= env.season - 2
 
     results = training_results(env.csv_location, env.season, last_two_years)
+
+    if env.regression_csv_include:
+        results += training_results(
+            env.regression_csv_location, env.season, last_two_years
+        )
+
     fixtures = list(map(lambda r: r.fixture, results))
 
     teams_provider = TeamsProvider(fixtures)

@@ -55,7 +55,7 @@ def load_results(
                 outcome=match_outcome(home_goals, away_goals),
                 home_goals=home_goals,
                 away_goals=away_goals,
-                season=int(row["season"]),
+                season=int(row["season"].strip()),
             )
         except (KeyError, ValueError):
             return None
@@ -63,6 +63,7 @@ def load_results(
     training_data = requests.get(csv_location).text
 
     rows = csv.DictReader(training_data.splitlines())
+
     results = filter(
         lambda r: type(r) is Result and result_filter(r), map(result_from_row, rows)
     )
